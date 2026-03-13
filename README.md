@@ -4,9 +4,7 @@ A deterministic, open‑addressed hash map for low‑latency C++ systems, design
 
 `milo::FlatMap` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
 
-`std::unordered_map` is great for general-purpose computing, however it suffers from poor latency distribution where >p90 results are orders of magnitude slower than the mean, and insert/erase operations are very expensive.
-
-Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if *OTHER* elements are removed or changed, and the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout that operates like a "bucket-of-linked-lists" (chaining) design, where each insertion can trigger a separate heap allocation for a new node. 
+`std::unordered_map` operations above >p90 can be orders of magnitude slower than the mean, and insert/erase operations are expensive. Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if *OTHER* elements are removed or changed, and the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This causes a a fragmented memory layoutand frequent cache misses with behaivor closer to a "bucket-of-linked-lists" , where each insertion can trigger a separate heap allocation for a new node. 
 
 FlatMap is faster in-part because it entirely ignores this mandate.
 
@@ -19,11 +17,9 @@ FlatMap is faster in-part because it entirely ignores this mandate.
  
 FlatMap performs Linear Probing with prefetch and branch predictor hints over slot metadata stored contiguously in memory, seperate from key-value storage. This allows for much faster iteration over single-byte metadata that avoids processing the actual key:value for each slot. 
 
-modern CPU's are VERY good at pre-fetching linear arrays, and these clock cycles we save here allows for cheap re-addressing (shifting) on deletion of any element, ensuring our data stays packed tight in one linear memory space. 
+modern CPU's are VERY good at pre-fetching linear arrays, and these clock cycles we save here allows for cheap re-addressing (shifting) on deletion of any element, ensuring our data stays packed tight in one linear memory space, further reducing tail latencies. 
 
-In std::unordered_map or data structures with "tombstones" (marking a slot as deleted but not moving data), the map gets "polluted" over time. Lookups have to jump over these dead slots, making the search take longer, and forcing data packed into buckets to be evaluated before the next bucket can be looked at. Almost every lookup will have cache misses.
-
-Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data, ensuring it stays packed tight in one linear memory space and keeping tail latencies much lower. 
+In std::unordered_map or data structures with "tombstones" (marking a slot as deleted but not moving data), the map gets "polluted" over time. Data stays packed into buckets that must be evaluated before continuing.
 
 ## Key Features
 
@@ -39,18 +35,13 @@ Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data,
 ## Why Determinism Matters Beyond Speed 
 
   When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a won or lost trade.
-  The first step is that we need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
+  The first step in that process is making sure we are not missing opportunities due to structural flaws in our own containers.
 
   Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load cannot be used in any latency-sensitive application. 
   Mitigating entropy from undefined behaivor and unpredictable execution is crucial especially in early phases of development.
       
-  'milo::FlatMap' is intended to **help** with these issues. It does not and cannot solve them. 
-
-
   
   **DISCLAIMER** *It's worth mentioning that any hash based lookup is very likely, **not** the right tool for RTOS/embedded or deterministic Low latency production environments :)*
-
-
 
 
   ## Usage
