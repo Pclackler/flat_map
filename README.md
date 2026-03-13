@@ -42,9 +42,12 @@ The cycles we save here allows for backward‑shift deletion (instead of tombsto
 
   ## Usage
 
-  git clone <pclackler/flat_map>
-  cd </flat_map>
+  git clone pclackler/flat_map
+  
+  cd flat_map
+  
   mkdir build && cd build
+  
   cmake .. -DCMAKE_BUILD_TYPE=Release
   cmake --build .
   ./bin/milo_benchmark   # or ./milo_benchmark depending on platform
