@@ -36,14 +36,17 @@ Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data,
 * **Tightly bounded operation times:** Designed specifically for high-frequency environments where microsecond spikes are unacceptable.
 
 
-**Why Determinism Matters Beyond Speed**
+## Why Determinism Matters Beyond Speed 
 
   When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a won or lost trade.
   The first step is that we need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
-    
-  'milo::FlatMap' is intended to **help** with these issues. It cannot solve them. 
+
+  Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load cannot be used in any latency-sensitive operations. 
+  Mitigating entropy from undefined behaivor and unpredictable execution is crucial.
+      
+  'milo::FlatMap' is intended to **help** with these issues. It does not and cannot solve them. 
   
-  *DISCLAIMER* It's worth mentioning despit this, any hash based lookup is likely **not** the right tool for RTOS/embedded or Low latency production environments :)
+  *DISCLAIMER* It's worth mentioning that any hash based lookup is likely **not** the right tool for RTOS/embedded or true deterministic Low latency production environments :)
 
   ## Usage
   
