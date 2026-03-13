@@ -1,5 +1,5 @@
 
-// main.cpp – Benchmark for milo::FlatMap vs std::unordered_map
+// main.cpp – Benchmark for milo::flat_map vs std::unordered_map
 //==============================================================================
 // Compile with: g++ -std=c++20 -O2 -march=native main.cpp -o benchmark
 // (Adjust flags for your compiler.)
@@ -139,7 +139,7 @@ static constexpr int WARMUP_OPS = 1'000'000;
 
 
 int main() {
-    std::cout << "milo::FlatMap benchmark\n"
+    std::cout << "milo::flat_map benchmark\n"
         << "Operations per test: " << NUM_OPS / 1'000'000 << "M, "
         << "warmup: " << WARMUP_OPS / 1'000'000 << "M\n"
         << "All times are in CPU cycles (RDTSC)\n\n";
@@ -171,11 +171,11 @@ int main() {
 
         print_header("uint64_t keys");
 
-        // milo::FlatMap
+        // milo::flat_map
         {
             milo::flat_map<uint64_t, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
-            run_bench("Milo::HashMap", "insert", [&] {
+            run_bench("milo::flat_map", "insert", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) m[keys[i]] = i;
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
@@ -190,7 +190,7 @@ int main() {
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[keys[i]] = i;
             volatile uint64_t sink = 0;
-            run_bench("Milo::HashMap", "lookup", [&] {
+            run_bench("milo::flat_map", "lookup", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) {
                     auto* v = m.find(lookup_keys[i % NUM_OPS]);
                     sink += (v ? *v : 0);
@@ -209,7 +209,7 @@ int main() {
             milo::flat_map<uint64_t, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[keys[i]] = i;
-            run_bench("Milo::HashMap", "lookup+append", [&] {
+            run_bench("milo::flat_map", "lookup+append", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m[lookup_keys[i]] += 1;
@@ -222,7 +222,7 @@ int main() {
             milo::flat_map<uint64_t, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[keys[i]] = i;
-            run_bench("Milo::HashMap", "erase", [&] {
+            run_bench("milo::flat_map", "erase", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m.erase(lookup_keys[i]);
@@ -309,11 +309,11 @@ int main() {
 
         print_header("std::string keys (8-24 chars)");
 
-        // milo::FlatMap
+        // milo::flat_map
         {
             milo::flat_map<std::string, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
-            run_bench("Milo::HashMap", "insert", [&] {
+            run_bench("milo::flat_map", "insert", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) m[all_keys[i]] = i;
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
@@ -328,7 +328,7 @@ int main() {
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
             volatile uint64_t sink = 0;
-            run_bench("Milo::HashMap", "lookup", [&] {
+            run_bench("milo::flat_map", "lookup", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) {
                     auto* v = m.find(lookup_keys[i % NUM_OPS]);
                     sink += (v ? *v : 0);
@@ -347,7 +347,7 @@ int main() {
             milo::flat_map<std::string, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
-            run_bench("Milo::HashMap", "lookup+append", [&] {
+            run_bench("milo::flat_map", "lookup+append", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m[lookup_keys[i]] += 1;
@@ -360,7 +360,7 @@ int main() {
             milo::flat_map<std::string, uint64_t> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
-            run_bench("Milo::HashMap", "erase", [&] {
+            run_bench("milo::flat_map", "erase", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m.erase(lookup_keys[i]);
@@ -448,11 +448,11 @@ int main() {
 
         print_header("FixedKey32 (char[32]) keys");
 
-        // milo::FlatMap with explicit hash
+        // milo::flat_map with explicit hash
         {
             milo::flat_map<milo::char32, uint64_t, milo::char32Hash> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
-            run_bench("Milo::HashMap", "insert", [&] {
+            run_bench("milo::flat_map", "insert", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) m[all_keys[i]] = i;
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
@@ -467,7 +467,7 @@ int main() {
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
             volatile uint64_t sink = 0;
-            run_bench("Milo::HashMap", "lookup", [&] {
+            run_bench("milo::flat_map", "lookup", [&] {
                 for (int i = 0; i < WARMUP_OPS; ++i) {
                     auto* v = m.find(lookup_keys[i % NUM_OPS]);
                     sink += (v ? *v : 0);
@@ -486,7 +486,7 @@ int main() {
             milo::flat_map<milo::char32, uint64_t, milo::char32Hash> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
-            run_bench("Milo::HashMap", "lookup+append", [&] {
+            run_bench("milo::flat_map", "lookup+append", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m[lookup_keys[i]] += 1;
@@ -499,7 +499,7 @@ int main() {
             milo::flat_map<milo::char32, uint64_t, milo::char32Hash> m;
             m.reserve(NUM_OPS + WARMUP_OPS);
             for (int i = 0; i < NUM_OPS + WARMUP_OPS; ++i) m[all_keys[i]] = i;
-            run_bench("Milo::HashMap", "erase", [&] {
+            run_bench("milo::flat_map", "erase", [&] {
                 for (int i = 0; i < NUM_OPS; ++i) {
                     uint64_t t0 = rdtsc();
                     m.erase(lookup_keys[i]);
