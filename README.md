@@ -68,7 +68,7 @@ For example:
   };
     
   // char[32] = 32 bytes, Position = 32 bytes 
-  milo::FlatMap<milo::char32,std::vector<<Position>> open_positions;
+  milo::FlatMap<milo::char32,std::vector<Position>> open_positions;
 
   // Because data is stored contiguously, a 'Flatten All' operation 
   // is a highly cache-friendly linear sweep.
