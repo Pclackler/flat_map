@@ -9,7 +9,7 @@ std::unordered_map is typically a "bucket-of-linked-lists" (chaining) design, wh
 
 In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout. 
 
-FlatMap is faster precisely because it ignores this directive.
+FlatMap is faster because it ignores this mandate.
 
 
 
