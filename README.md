@@ -1,19 +1,19 @@
 
-## milo::FlatMap
+## milo::flat_map
 A deterministic, open‑addressed hash map for low‑latency C++ systems, designed to provide a smoother latency distribution through p99.
 
-`milo::FlatMap` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
+`milo::flat_map` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
 
 `std::unordered_map` operations above >p90 can be orders of magnitude slower than the mean, and insert/erase operations are expensive. Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if *OTHER* elements are removed or changed, and the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This causes a a fragmented memory layoutand frequent cache misses with behaivor closer to a "bucket-of-linked-lists" , where each insertion can trigger a separate heap allocation for a new node. 
 
-FlatMap is faster because it ignores this.
+flat_map is faster because it ignores this.
 
 <img src="./images/bar_lookup.png" width="400" alt="A descriptive text"><img src="./images/bar_lookup_append.png" width="400" alt="A descriptive text">
 <img src="./images/bar_insert.png" width="400" alt="A descriptive text"><img src="./images/bar_erase.png" width="400" alt="A descriptive text">
 
 ## How and Why?
 
- `milo::FlatMap` deliberately does not provide pointer/iterator stability.
+ `milo::flat_map` deliberately does not provide pointer/iterator stability.
  
  Instead, it stores all data in a single contiguous array, using open addressing with linear probing combined with branch/prefetch hints. A separate metadata array (one byte per slot) holds the probe state, allowing the CPU to scan 64 slots per cache miss – a technique that modern hardware prefetchers handle extremely well.
 
@@ -42,12 +42,12 @@ The cycles we save here allows for backward‑shift deletion (instead of tombsto
 
   ## Usage
   
-For string keys, `milo::char32` is recommended. It is a thin wrapper over `char[32]`. Because `milo::FlatMap` stores data contiguously,
+For string keys, `milo::char32` is recommended. It is a thin wrapper over `char[32]`. Because `milo::flat_map` stores data contiguously,
 pairing it with a 32-byte value struct aligns perfectly with standard 64-byte cache lines.
 
-'milo::char32' contains a string literal constructor, so standard milo::FlatMap["StringKey"].item() calls will work.
+'milo::char32' contains a string literal constructor, so standard milo::flat_map["StringKey"].item() calls will work.
 
-For example, let's assume `milo::FlatMap open_positions` is in our hotpath and accessed every program cycle :
+For example, let's assume `milo::flat_map open_positions` is in our hotpath and accessed every program cycle :
 
 ```C++
 
@@ -60,7 +60,7 @@ For example, let's assume `milo::FlatMap open_positions` is in our hotpath and a
   };
     
   // char[32] = 32 bytes, Position = 32 bytes 
-  milo::FlatMap<milo::char32,std::vector<Position>> open_positions;
+  milo::flat_map<milo::char32,std::vector<Position>> open_positions;
 
 
   // Somewhere in main.cpp inside a tightly bound loop:
