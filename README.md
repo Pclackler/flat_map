@@ -60,9 +60,10 @@ pairing it with a 32-byte value struct aligns perfectly with standard 64-byte ca
 
 'milo::char32' contains a string literal constructor, so standard milo::FlatMap["StringKey"].item() calls will work.
 
-For example:
+For example, let's assume `milo::FlatMap open_positions` is in our hotpath and accessed every program cycle :
 
 ```C++
+
 
   struct alignas(32) Position{
       bool open = false;
@@ -74,19 +75,22 @@ For example:
   // char[32] = 32 bytes, Position = 32 bytes 
   milo::FlatMap<milo::char32,std::vector<Position>> open_positions;
 
-  // Because data is stored contiguously, a 'Flatten All' operation 
-  // is a highly cache-friendly linear sweep.
-      
+
+  // Somewhere in main.cpp inside a tightly bound loop:
+  while(true){
+
+  // Because data is stored contiguously, a 'Flatten All' operation is a highly cache-friendly linear sweep. 
   if(CATASTROPHIC_NEWS_EVENT){
-    for (auto& position : open_positions["NVDA"]) {
+    for (auto& position : open_positions["NVDA"]) {       
         position.flatten();
     }  
-  }
-  
-  // This closes EVERY position in the map. Highlighting the benefits of backward-shift deletion over stale tombstone entries.
+ 
+  // This closes EVERY position in the map. Highlighting the benefits of backward-shift deletion over stale tombstone entries after accumulating many entries.
   for (auto& [ticker, position] : open_positions) {
       position.close(); 
   }
+ }
+}
 
   
 ```
