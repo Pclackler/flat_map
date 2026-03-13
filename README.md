@@ -47,33 +47,36 @@ pairing it with a 32-byte value struct aligns perfectly with standard 64-byte ca
 'milo::char32' contains a string literal constructor, so standard milo::FlatMap["StringKey"].item() calls will work.
 
 For example:
+
 '''
-struct alignas(32) Position{
-    bool open = false;
-    float pnl = 0.0;
-    
-    void flatten(){ ; // flatten everything } 
-};
 
-// char[32] = 32 bytes, Position = 32 bytes
-
-milo::FlatMap<milo::char32,std::vector<<Position>> open_positions;
-
-
-if(CATASTROPHIC_NEWS_EVENT){
-    // Because data is stored contiguously,
-    a 'Flatten All' operation 
-    // is a highly cache-friendly linear sweep.
-    
-   for (auto& position : open_positions["NVDA"]) {
-      position.flatten();
-  }  
-}
-
-// This closes EVERY position in the map
-for (auto& [ticker, position] : open_positions) {
-    position.close(); 
-}
+  struct alignas(32) Position{
+      bool open = false;
+      float pnl = 0.0;
+      
+      void flatten(){ ; // flatten everything } 
+  };
+  
+  // char[32] = 32 bytes, Position = 32 bytes
+  
+  milo::FlatMap<milo::char32,std::vector<<Position>> open_positions;
+  
+  
+  if(CATASTROPHIC_NEWS_EVENT){
+      // Because data is stored contiguously,
+      a 'Flatten All' operation 
+      // is a highly cache-friendly linear sweep.
+      
+     for (auto& position : open_positions["NVDA"]) {
+        position.flatten();
+    }  
+  }
+  
+  // This closes EVERY position in the map
+  for (auto& [ticker, position] : open_positions) {
+      position.close(); 
+  }
+  
 '''
 
 Because milo::FlatMap stores data contiguously a 'Flatten All'(perform an action on EVERY entry) operation is a cache-friendly linear sweep.
