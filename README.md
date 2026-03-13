@@ -42,7 +42,7 @@ When attempting to build high-frequency trading (HFT) systems, microseconds can 
 **Why Determinism Matters Beyond Speed**
 
   When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a won or lost trade.
-  We need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
+  The first step is that we need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
     
   'milo::FlatMap' is intended to **help** with these issues. It cannot solve them. 
   *DISCLAIMER* I find it important to point out that a hash based map is likely not the right tool for RTOS/Low latency production or embedded environments :) 
