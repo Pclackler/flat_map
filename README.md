@@ -26,11 +26,20 @@ In std::unordered_map or data structures with "tombstones" (marking a slot as de
 
 * **No per‑element heap allocations:** Memory is allocated in bulk up front.
 
-* **Excellent cache locality:** Utilizes a separated metadata array. A probe loop touches only a dense byte array, checking 64 slots per cache miss.
+* **Excellent cache locality:** Avoids pointer chasing and utilizes a separated metadata array. A probe loop touches only a dense byte array, checking 64 slots per cache miss.
   
-* **Deterministic Deletions:** Uses backward-shift deletion instead of tombstones. Erasing is O(1) amortized and shouldn't trigger a conditional rehash or latency spike.
+* **Deterministic Deletions:** Uses backward-shift deletion instead of tombstones. Erasing is O(1) amortized.
  
 * **Tightly bounded operation times:** Designed specifically for high-frequency environments where microsecond spikes are unacceptable.
+
+
+## Why Determinism Matters Beyond Speed
+
+When attempting to build high-frequency trading (HFT) systems, microseconds can be the difference between a won or lost trade. We need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
+
+* **Smarter Provisioning:** Provision your resources based on the mean latency plus a small safety margin, rather than massively over‑provisioning just to absorb p99.9 spikes.
+* **Better Debuggability:** Performance anomalies and systemic issues are no longer hidden inside the natural variance of your data structures.
+
 
 **Why Determinism Matters Beyond Speed**
 
@@ -103,17 +112,6 @@ A deterministic, open-addressed flat hash map for low-latency C++ systems, desig
 
 While `std::unordered_map` is great for general-purpose computing, it suffers from a poor latency distribution where >p90 results can be orders of magnitude slower than the mean. `milo::FlatMap` is designed to remove sources of unpredictable tail latencies, allowing you to sketch systems quickly with verbose access while maintaining strict performance bounds.
 
-## Key Features
 
-* **No per‑element heap allocations:** Memory is allocated in bulk up front.
-* **Excellent cache locality:** Utilizes a separated metadata array. A probe loop touches only a dense byte array, checking 64 slots per cache miss.
-* **Deterministic Deletions:** Uses backward-shift deletion instead of tombstones. Erasing is O(1) amortized and never triggers a conditional rehash or latency spike.
-* **Tightly bounded operation times:** Designed specifically for high-frequency environments where microsecond spikes are unacceptable.
 
-## Why Determinism Matters Beyond Speed
-
-When attempting to build high-frequency trading (HFT) systems, microseconds can be the difference between a won or lost trade. We need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
-
-* **Smarter Provisioning:** Provision your resources based on the mean latency plus a small safety margin, rather than massively over‑provisioning just to absorb p99.9 spikes.
-* **Better Debuggability:** Performance anomalies and systemic issues are no longer hidden inside the natural variance of your data structures.
 
