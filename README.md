@@ -4,24 +4,26 @@ A deterministic, open‑addressed hash map for low‑latency C++ systems, design
 
 `milo::FlatMap` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
 
-While `std::unordered_map` is great for general-purpose computing, it suffers from poor latency distribution where >p90 results are orders of magnitude slower than the mean, and insert/erase operations are very expensive.
-std::unordered_map is typically a "bucket-of-linked-lists" (chaining) design, where each insertion can trigger a separate heap allocation for a new node. `milo::FlatMap` uses Open Addressing, where data lives in a single, contiguous array.
+`std::unordered_map` is great for general-purpose computing, however it suffers from poor latency distribution where >p90 results are orders of magnitude slower than the mean, and insert/erase operations are very expensive.
 
-In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout. 
+Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if *OTHER* elements are removed or changed, and the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout that operates like a "bucket-of-linked-lists" (chaining) design, where each insertion can trigger a separate heap allocation for a new node. 
 
 FlatMap is faster in-part because it entirely ignores this mandate.
 
 <img src="./images/bar_lookup.png" width="400" alt="A descriptive text"><img src="./images/bar_lookup_append.png" width="400" alt="A descriptive text">
 <img src="./images/bar_insert.png" width="400" alt="A descriptive text"><img src="./images/bar_erase.png" width="400" alt="A descriptive text">
 
-How and Why?
-
-FlatMap performs Linear Probing with prefetch and branch predictor hints over slot metadata stored contiguously in memory, seperate from key-value storage. This allows for much faster iteration over single-byte metadata that avoids processing the actual key:value data. 
+## How and Why?
+ 
+ `milo::FlatMap` uses Open Addressing, where data lives in a single, contiguous array.
+ 
+FlatMap performs Linear Probing with prefetch and branch predictor hints over slot metadata stored contiguously in memory, seperate from key-value storage. This allows for much faster iteration over single-byte metadata that avoids processing the actual key:value for each slot. 
 
 modern CPU's are VERY good at pre-fetching linear arrays, and these clock cycles we save here allows for cheap re-addressing (shifting) on deletion of any element, ensuring our data stays packed tight in one linear memory space. 
 
 In std::unordered_map or data structures with "tombstones" (marking a slot as deleted but not moving data), the map gets "polluted" over time. Lookups have to jump over these dead slots, making the search take longer, and forcing data packed into buckets to be evaluated before the next bucket can be looked at. Almost every lookup will have cache misses.
 
+Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data, ensuring it stays packed tight in one linear memory space and keeping tail latencies much lower. 
 
 ## Key Features
 
@@ -36,11 +38,10 @@ In std::unordered_map or data structures with "tombstones" (marking a slot as de
 
 ## Why Determinism Matters Beyond Speed
 
-When attempting to build high-frequency trading (HFT) systems, microseconds can be the difference between a won or lost trade. We need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
-
 * **Smarter Provisioning:** Provision your resources based on the mean latency plus a small safety margin, rather than massively over‑provisioning just to absorb p99.9 spikes.
 * **Better Debuggability:** Performance anomalies and systemic issues are no longer hidden inside the natural variance of your data structures.
-
+When attempting to build high-frequency trading (HFT) systems, microseconds can be the difference between a won or lost trade. We need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers before
+looking at anything else.
 
 **Why Determinism Matters Beyond Speed**
 
