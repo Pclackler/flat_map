@@ -1,6 +1,6 @@
 
 ## milo::FlatMap
-A deterministic, open‑addressed hash map for low‑latency C++ systems, designed to provide a smoother latency distribution.
+A deterministic, open‑addressed hash map for low‑latency C++ systems, designed to provide a smoother latency distribution through p99.
 
 `milo::FlatMap` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
 
