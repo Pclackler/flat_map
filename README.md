@@ -47,7 +47,7 @@ pairing it with a 32-byte value struct aligns perfectly with standard 64-byte ca
 'milo::char32' contains a string literal constructor, so standard milo::FlatMap["StringKey"].item() calls will work.
 
 For example:
-
+'''
 struct alignas(32) Position{
     bool open = false;
     float pnl = 0.0;
@@ -74,7 +74,7 @@ if(CATASTROPHIC_NEWS_EVENT){
 for (auto& [ticker, position] : open_positions) {
     position.close(); 
 }
-
+'''
 
 Because milo::FlatMap stores data contiguously a 'Flatten All'(perform an action on EVERY entry) operation is a cache-friendly linear sweep.
 
