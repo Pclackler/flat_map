@@ -9,12 +9,10 @@ std::unordered_map is typically a "bucket-of-linked-lists" (chaining) design, wh
 
 In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout. 
 
-FlatMap is faster because it ignores this mandate.
+FlatMap is faster in-part because it entirely ignores this mandate.
 
 <img src="./images/bar_lookup.png" width="400" alt="A descriptive text"><img src="./images/bar_lookup_append.png" width="400" alt="A descriptive text">
 <img src="./images/bar_insert.png" width="400" alt="A descriptive text"><img src="./images/bar_erase.png" width="400" alt="A descriptive text">
-
-
 
 How and Why?
 
@@ -50,9 +48,8 @@ When attempting to build high-frequency trading (HFT) systems, microseconds can 
   The first step is that we need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
     
   'milo::FlatMap' is intended to **help** with these issues. It cannot solve them. 
-  *DISCLAIMER* I find it important to point out that a hash based map is likely not the right tool for RTOS/Low latency production or embedded environments :) 
-
-
+  
+  *DISCLAIMER* I feel it important to note that any hash based map is likely **not** the right tool for RTOS/embedded or Low latency production environments.
 
   ## Usage
   
