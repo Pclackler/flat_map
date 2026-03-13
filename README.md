@@ -85,7 +85,7 @@ For example, let's assume `milo::flat_map open_positions` is in our hotpath and 
 
 
 
-  **DISCLAIMER** *It's worth mentioning that any hash based lookup is very likely, **not** the right tool for RTOS/embedded or deterministic Low latency production environments :)*
+  **DISCLAIMER** *It's worth mentioning that any hash based lookup is very likely, **not** the right tool for RTOS/embedded or deterministic low latency environments :)*
 
 
 
