@@ -41,8 +41,8 @@ Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data,
   When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a won or lost trade.
   The first step is that we need to be absolutely sure we are not missing opportunities due to structural flaws in our own containers.
 
-  Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load cannot be used in any latency-sensitive operations. 
-  Mitigating entropy from undefined behaivor and unpredictable execution is crucial.
+  Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load cannot be used in any latency-sensitive application. 
+  Mitigating entropy from undefined behaivor and unpredictable execution is crucial especially in early phases of development.
       
   'milo::FlatMap' is intended to **help** with these issues. It does not and cannot solve them. 
   
