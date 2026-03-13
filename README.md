@@ -53,8 +53,12 @@ For example:
   struct alignas(32) Position{
       bool open = false;
       float pnl = 0.0;
+
+      // flatten everything
+      void flatten(){ 
+      ; 
       
-      void flatten(){ ; // flatten everything } 
+      } 
   };
   
   // char[32] = 32 bytes, Position = 32 bytes
