@@ -41,6 +41,17 @@ The cycles we save here allows for backward‑shift deletion (instead of tombsto
 
 
   ## Usage
+
+  git clone <pclackler/flat_map>
+  cd </flat_map>
+  mkdir build && cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  cmake --build .
+  ./bin/milo_benchmark   # or ./milo_benchmark depending on platform
+
+
+
+
   
 For string keys, `milo::char32` is recommended. It is a thin wrapper over `char[32]`. Because `milo::flat_map` stores data contiguously,
 pairing it with a 32-byte value struct aligns perfectly with standard 64-byte cache lines.
