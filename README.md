@@ -2,10 +2,10 @@
 ## milo::FlatMap
 A deterministic, open‑addressed hash map for low‑latency C++ systems, designed to provide a smoother latency distribution.
 
-'milo::FlatMap' was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
+`milo::FlatMap` was designed to allow me to sketch systems quickly with verbose access to resources while not introducing wild tail latencies.
 
 While `std::unordered_map` is great for general-purpose computing, it suffers from poor latency distribution where >p90 results are orders of magnitude slower than the mean, and insert/erase operations are very expensive.
-std::unordered_map is typically a "bucket-of-linked-lists" (chaining) design, where each insertion can trigger a separate heap allocation for a new node. 'milo::FlatMap' uses Open Addressing, where data lives in a single, contiguous array.
+std::unordered_map is typically a "bucket-of-linked-lists" (chaining) design, where each insertion can trigger a separate heap allocation for a new node. `milo::FlatMap` uses Open Addressing, where data lives in a single, contiguous array.
 
 In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard requires that once an element is inserted it's address must remain constant until that specific element is erased. Even if the map rehashes and grows to 1,000x its original size, the pointers to existing elements must remain valid. This leads to frequent cache misses and a fragmented memory layout. 
 
