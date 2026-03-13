@@ -31,9 +31,8 @@ The cycles we save here allows for backward‑shift deletion to keep the array t
 * **Tightly bounded operation times:** Designed specifically for high-frequency environments where microsecond spikes are unacceptable.
 
  ## Performance 
- flat_map vs unordered_map.
- 
- 10mm operations ea. Lookup, insert, lookup+append,erase. 
+ flat_map vs unordered_map. 10mm operations ea. Lookup, insert, lookup+append,erase. 
+  
 <img src="./images/bar_lookup.png" width="400" alt="A descriptive text"><img src="./images/bar_lookup_append.png" width="400" alt="A descriptive text">
 <img src="./images/bar_insert.png" width="400" alt="A descriptive text"><img src="./images/bar_erase.png" width="400" alt="A descriptive text">
 
@@ -42,53 +41,12 @@ The cycles we save here allows for backward‑shift deletion to keep the array t
   
 ## Example
   
- For string keys, `milo::char32` is recommended. It is a thin wrapper over `char[32]`. Because `milo::flat_map` stores data contiguously,
- pairing it with a 32-byte value struct aligns perfectly with standard 64-byte cache lines.
+ In this example I'm using  `milo::char32`, a thin wrapper over `char[32]` to act as a faster std::string key.
  
- 'milo::char32' contains a string literal constructor, so standard milo::flat_map["StringKey"].item() calls will work.
+ milo::flat_map stores each key‑value pair contiguously. By using a 32‑byte key (like milo::char32) and a 32‑byte value,  the entire pair fits exactly into a 64‑byte cache line.
+ This means that when the key is brought into L1 cache, the value is already resident – eliminating an extra cache miss and improving lookup throughput.
  
- For example, let's assume `milo::flat_map open_positions` is in our hotpath and accessed every program cycle :
- 
- ```C++
-
-
-  struct alignas(32) Position{
-      bool open = false;
-      float pnl = 0.0;
-    
-      void flatten(){ ; // flatten everything } 
-  };
-    
-  // char[32] = 32 bytes, Position = 32 bytes 
-  milo::flat_map<milo::char32,std::vector<Position>> open_positions;
-
-
-  // Somewhere in main.cpp inside a tightly bound loop:
-  while(true){
-
-  // Because data is stored contiguously, a 'Flatten All' operation is a highly cache-friendly linear sweep. 
-  if(CATASTROPHIC_NEWS_EVENT){
-    for (auto& position : open_positions["NVDA"]) {       
-        position.flatten();
-    }  
- 
-  // This closes EVERY position in the map. Highlighting the benefits of backward-shift deletion over stale tombstone entries after accumulating many entries.
-  for (auto& [ticker, position] : open_positions) {
-      position.close(); 
-  }
- }
-}
-
-  
-```
-
-
-## Example
-  
- For string keys, `milo::char32` is recommended. It is a thin wrapper over `char[32]`. Because `milo::flat_map` stores data contiguously,
- pairing it with a 32-byte value struct aligns perfectly with standard 64-byte cache lines.
- 
- 'milo::char32' contains a string literal constructor, so standard milo::flat_map["StringKey"].item() calls will work.
+ 'milo::char32' contains a string literal constructor, so milo::flat_map["StringKey"].item() ( or ->item() ) calls will work.
  
  For example, let's assume `milo::flat_map open_positions` is in our hotpath and accessed every program cycle :
  
@@ -124,9 +82,17 @@ The cycles we save here allows for backward‑shift deletion to keep the array t
 
   
 ```
+
   
   ## Usage
 
+  header only. 
+
+  `#include "milo/flat_map.h"` 
+
+  example .cpp contains benchmarks, using uint64_t, std::string, and milo::char32 keys that produced the results in the above graphs.
+
+  
   git clone pclackler/flat_map
   
   cd flat_map
