@@ -34,8 +34,8 @@ In std::unordered_map or data structures with "tombstones" (marking a slot as de
 
 ## Why Determinism Matters Beyond Speed 
 
-  When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a won or lost trade.
-  The first step in that process is making sure we are not missing opportunities due to structural flaws in our own containers.
+  When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a positive or negative outcome.
+  The first step in that process is making sure the outcome is not notably affected by structural flaws in our own containers.
 
   Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load cannot be used in any latency-sensitive application. 
   Mitigating entropy from undefined behaivor and unpredictable execution is crucial especially in early phases of development.
