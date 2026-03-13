@@ -11,6 +11,11 @@ In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard r
 
 FlatMap is faster precisely because it ignores this directive.
 
+
+
+
+
+
 How and Why?
 
 FlatMap performs Linear Probing with prefetch and branch predictor hints over slot metadata stored contiguously in memory, seperate from key-value storage. This allows for much faster iteration over single-byte metadata that avoids processing the actual key:value data. 
