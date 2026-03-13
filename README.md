@@ -45,8 +45,13 @@ Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data,
   Mitigating entropy from undefined behaivor and unpredictable execution is crucial especially in early phases of development.
       
   'milo::FlatMap' is intended to **help** with these issues. It does not and cannot solve them. 
+
+
   
-  **DISCLAIMER** *It's worth mentioning that any hash based lookup is likely * **not** * the right tool anyway for RTOS/embedded or true deterministic Low latency production environments :)*
+  **DISCLAIMER** *It's worth mentioning that it's very likely any hash based lookup is* **not** * the right tool for RTOS/embedded or deterministic Low latency production environments :)*
+
+
+
 
   ## Usage
   
