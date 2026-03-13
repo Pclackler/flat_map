@@ -35,7 +35,7 @@ The cycles we save here allows for backward‑shift deletion (instead of tombsto
   When attempting to build high-frequency trading or latency sensitive systems, microseconds can be the difference between a positive or negative outcome.
   The first step in that process is making sure the outcome is not notably affected by structural flaws in our own containers.
 
-  Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms under load isn't well suited for latency-sensitive applications.
+  Operations need to be fast, but also *reliable*, something that takes 10ns *most* of the time, but 1ms *sometimes* isn't well suited for latency-sensitive applications.
    
         
 
