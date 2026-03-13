@@ -48,7 +48,7 @@ Ignoring the C++ Standard Pointer Stability mandate lets us re-address our data,
 
 
   
-  **DISCLAIMER** *It's worth mentioning that it's very likely any hash based lookup is* **not** * the right tool for RTOS/embedded or deterministic Low latency production environments :)*
+  **DISCLAIMER** *It's worth mentioning that any hash based lookup is very likely, **not** the right tool for RTOS/embedded or deterministic Low latency production environments :)*
 
 
 
