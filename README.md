@@ -11,8 +11,8 @@ In std::unordered_map, Pointer/Iterator stability mandates in the C++ standard r
 
 FlatMap is faster because it ignores this mandate.
 
-
-
+<img src="./images/bar_lookup.png" width="400" alt="A descriptive text"><img src="./images/bar_lookup_append.png" width="400" alt="A descriptive text">
+<img src="./images/bar_insert.png" width="400" alt="A descriptive text"><img src="./images/bar_erase.png" width="400" alt="A descriptive text">
 
 
 
