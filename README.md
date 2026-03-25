@@ -7,7 +7,7 @@ A minminal open‑addressed hash map for low‑latency C++ systems.
  
 The C++ standard guarantees that pointers and references to elements in an `std::unordered_map` remain valid from the moment an element is inserted until it is erased. This stability holds even if other elements are inserted, removed, or if the map rehashes—growing to many times its original size—without affecting the memory address of existing elements. Iterators, however, may be invalidated by a rehash. This requirement forces the implementation to store each element in a separately allocated node, leading to a fragmented memory layout with the cache‑unfriendly behavior of a bucket‑of‑linked‑lists
 
-## How and Why?
+## What's different?
 
  `flat_map` deliberately does not provide pointer/iterator stability.
  
@@ -18,7 +18,7 @@ The cycles we save here allows for backward‑shift deletion to keep the array t
  In latency sensitive(or highly deterministic) systems, microseconds can be the difference between a positive or negative outcome.
  If you are designing for that it can be very difficult to identify sources of large tail latencies once systems become complex.
  
- I made this so I can assemble programs quickly with a bit more peace of mind, kwoning the outcome is not notably affected by structural flaws in the containers I'm using. 
+ I made this so I can assemble programs quickly with a bit more peace of mind, knowing the outcome is not notably affected by structural flaws in the containers I'm using. 
   
 ## Key Features
 
